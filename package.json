@@ -1,0 +1,29 @@
+{
+  "name": "ready-log-whats",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brunoventuras/ready-log-whats.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/brunoventuras/ready-log-whats/issues"
+  },
+  "homepage": "https://github.com/brunoventuras/ready-log-whats#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "next": "^10.1.3",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
