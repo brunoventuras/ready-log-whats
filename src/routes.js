@@ -2,15 +2,19 @@ const fs = require('fs');
 const routes = require('express').Router();
 const multer = require('multer');
 const multerConfig = require('./config/multer');
-// const caminho = 'archive/teste.txt';
-const caminho = 'archive/whats-082.txt';
 
 routes.post("/posts", multer(multerConfig).single('file'), (req, res)=>{
-  console.log(req.file);
-  return res.json({hello:"world"})
+  let local = 'archive/'+req.file.filename;
+  let result = getListar(local)
+  let arquivo = getArquivo(result)
+  
+  return res
+            .json(result)
+            .download('Download/arquivo.txt')
+            .send(req.file)
 });
 
-routes.get('/listar',(req, res)=>{
+function getListar(caminho){
 let result = new Array
 let data, horario, contato, status, altStatus, grupo
   const fileBuffer = fs.readFileSync(caminho,'utf-8')
@@ -36,14 +40,34 @@ let data, horario, contato, status, altStatus, grupo
     }
 
   })
-  // console.log(grupo)
-  res
-    .set({ 'Content-Type': 'text/plain' })
-    .send(result);
+  return result;
+}
+
+function getArquivo(obj) {
+  let hiddenElement,aux
+  let txt = '"GRUPO";"DATA";"HORARIO";"CONTATO";"STATUS"\n';
+  let objArqv = new Object();
+  // objArqv = JSON.parse(obj);
+  objArqv = obj;
+  
+  objArqv.forEach((row) => {
+    aux = Object.values(row)
+    txt += aux.join(';');
+    txt += "\n";
+  });
+  console.log(txt)
+  const csvFinal = fs.writeFileSync('Download/arquivo.txt',txt);
+  return csvFinal;
+  // hiddenElement = document.createElement('a');
+  // hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(txt);
+  // hiddenElement.target = '_blank';
+  // hiddenElement.download = objArqv.grupo + '.txt';
+  // hiddenElement.click();
+}
 
 
-})
-
+       
+       
 
 
 module.exports = routes;
