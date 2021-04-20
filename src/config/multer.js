@@ -22,7 +22,8 @@ module.exports = {
   },
   fileFilter:(req, file, cb)=>{
     const allowedMimes = [
-      'text/plain'
+      'text/plain',
+      'application/x-zip-compressed'
     ];
     if(allowedMimes.includes(file.mimetype)){
       cb(null,true);

@@ -4,13 +4,22 @@ const multer = require('multer');
 const multerConfig = require('./config/multer');
 
 routes.post("/posts", multer(multerConfig).single('file'), (req, res)=>{
-  let local = 'archive/'+req.file.filename;
+  let nomeArquivo;
+  if(req.file.mimetype= 'application/x-zip-compressed'){
+    console.log("ZIP")
+    console.log(req.file.filename.substr(-4))
+    fs.createReadStream('archive/'+req.file.filename).pipe(unzip.Extract({
+      path:'Download/'
+    }))
+  }else{
+    nomeArquivo=req.file.filename
+  }
+  let local = 'archive/'+nomeArquivo;
   let result = getListar(local)
   let arquivo = getArquivo(result)
   
   return res
             .json(result)
-            .download('Download/arquivo.txt')
             .send(req.file)
 });
 
@@ -58,11 +67,7 @@ function getArquivo(obj) {
   console.log(txt)
   const csvFinal = fs.writeFileSync('Download/arquivo.txt',txt);
   return csvFinal;
-  // hiddenElement = document.createElement('a');
-  // hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(txt);
-  // hiddenElement.target = '_blank';
-  // hiddenElement.download = objArqv.grupo + '.txt';
-  // hiddenElement.click();
+
 }
 
 
