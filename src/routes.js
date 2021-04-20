@@ -1,31 +1,70 @@
 const fs = require('fs');
+const Zip = require('machinepack-zip'); 
+const unzipper = require('unzipper'); 
 const routes = require('express').Router();
 const multer = require('multer');
 const multerConfig = require('./config/multer');
 
 routes.post("/posts", multer(multerConfig).single('file'), (req, res)=>{
-  let nomeArquivo;
-  if(req.file.mimetype= 'application/x-zip-compressed'){
-    console.log("ZIP")
+  let nomeArquivo,
+      local = `archives/Upload/${req.file.filename}`,
+      result,
+      arquivo
+
+  if(req.file.mimetype== 'application/x-zip-compressed'){
+
     console.log(req.file.filename.substr(-4))
-    fs.createReadStream('archive/'+req.file.filename).pipe(unzip.Extract({
-      path:'Download/'
-    }))
+    const unZips =
+      fs
+        .createReadStream(local)
+        .pipe(unzipper.Extract({ path: 'archives/Temp' }));
+      
+    result = gerJsonPadrao_Zip('archives/Temp/_chat.txt')
+    console.log(result)
+
+   
   }else{
-    nomeArquivo=req.file.filename
+    result = gerJsonPadrao_Txt(local)
+    arquivo = gerArquivo(result)
   }
-  let local = 'archive/'+nomeArquivo;
-  let result = getListar(local)
-  let arquivo = getArquivo(result)
   
   return res
             .json(result)
             .send(req.file)
 });
 
-function getListar(caminho){
-let result = new Array
-let data, horario, contato, status, altStatus, grupo
+function gerJsonPadrao_Zip(caminho){
+  let result = new Array
+  let data, horario, contato, status, altStatus, grupo
+  const fileBuffer = fs.readFileSync(caminho,'utf-8')
+  let lines = fileBuffer.split(/\n/g)
+  let arrLines = lines.map((e,i)=>{
+    console.log(e.substr(41))
+    e.substr(e.indexOf("criou"),5)=='criou'?grupo = e.substr(e.indexOf("#")).substr(1,3):false
+
+    data = e.substr(1, 10)
+    horario = e.substr(12, 5)
+    if((e.substr(e.indexOf("entrou usando"),13)=='entrou usando')||(e.substr(e.indexOf(" saiu"),5)==' saiu')){
+      contato=e.substr(23,17).trim()
+      altStatus=e.substr(42).trim()
+      altStatus.substr(0,6) == 'entrou'?status="entrou":status=altStatus
+      result.push({
+        "grupo":grupo,
+        "data":data,
+        "horario":horario,
+        "contato":contato,
+        "status":status
+      })
+    }else{
+      contato=null
+    }
+
+  })
+  return result;
+}
+function gerJsonPadrao_Txt(caminho){
+  let result = new Array
+  let data, horario, contato, status, altStatus, grupo
   const fileBuffer = fs.readFileSync(caminho,'utf-8')
   let lines = fileBuffer.split(/\n/g)
   let arrLines = lines.map((e,i)=>{
@@ -52,12 +91,13 @@ let data, horario, contato, status, altStatus, grupo
   return result;
 }
 
-function getArquivo(obj) {
+function gerArquivo(obj) {
   let hiddenElement,aux
   let txt = '"GRUPO";"DATA";"HORARIO";"CONTATO";"STATUS"\n';
   let objArqv = new Object();
   // objArqv = JSON.parse(obj);
   objArqv = obj;
+  let nomeArq = objArqv[0].grupo
   
   objArqv.forEach((row) => {
     aux = Object.values(row)
@@ -65,7 +105,7 @@ function getArquivo(obj) {
     txt += "\n";
   });
   console.log(txt)
-  const csvFinal = fs.writeFileSync('Download/arquivo.txt',txt);
+  const csvFinal = fs.writeFileSync(`archives/Download/${nomeArq}.txt`,txt);
   return csvFinal;
 
 }
