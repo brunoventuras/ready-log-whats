@@ -6,6 +6,7 @@ const multer = require('multer');
 const multerConfig = require('./config/multer');
 
 routes.post("/posts", multer(multerConfig).single('file'), (req, res)=>{
+  console.log(req)
   let nomeArquivo,
       local = `archives/Upload/${req.file.filename}`,
       result,
@@ -95,7 +96,6 @@ function gerArquivo(obj) {
   let hiddenElement,aux
   let txt = '"GRUPO";"DATA";"HORARIO";"CONTATO";"STATUS"\n';
   let objArqv = new Object();
-  // objArqv = JSON.parse(obj);
   objArqv = obj;
   let nomeArq = objArqv[0].grupo
   
@@ -104,7 +104,6 @@ function gerArquivo(obj) {
     txt += aux.join(';');
     txt += "\n";
   });
-  console.log(txt)
   const csvFinal = fs.writeFileSync(`archives/Download/${nomeArq}.txt`,txt);
   return csvFinal;
 
