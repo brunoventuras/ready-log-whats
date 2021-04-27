@@ -12,5 +12,17 @@ app.use(morgan('dev'));
 
 app.use(require('./routes'));
 
+app.use((request, response, next) => {
+  const error = new Error("Endpoint not found.");
+  error.status = 404;
+  next(error);
+});
+
+app.use((error, request, response, next) => {
+  response.status(error.status || 500)
+  response.json({ error: error.message})
+})
+
+
 
 app.listen(process.env.PORT || 3333);
