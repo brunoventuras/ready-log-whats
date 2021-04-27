@@ -1,15 +1,14 @@
 const fs = require('fs');
-const Zip = require('machinepack-zip'); 
 const unzipper = require('unzipper'); 
 const routes = require('express').Router();
 const multer = require('multer');
 const multerConfig = require('./config/multer');
 
 routes.post("/posts", multer(multerConfig).single('file'), (req, res)=>{
-  let nomeArquivo,
-      local = `archives/Upload/${req.file.filename}`,
-      result,
-      arquivo
+  let 
+    result,
+    arquivo,
+    local = `archives/Upload/${req.file.filename}`;
 
   if(req.file.mimetype== 'application/x-zip-compressed'){
 
@@ -89,7 +88,7 @@ function gerJsonPadrao_Txt(caminho){
 }
 
 function gerArquivo(obj) {
-  let hiddenElement,aux
+  let aux
   let txt = '"GRUPO";"DATA";"HORARIO";"CONTATO";"STATUS"\n';
   let objArqv = new Object();
   objArqv = obj;
