@@ -6,7 +6,6 @@ const multer = require('multer');
 const multerConfig = require('./config/multer');
 
 routes.post("/posts", multer(multerConfig).single('file'), (req, res)=>{
-  console.log(req)
   let nomeArquivo,
       local = `archives/Upload/${req.file.filename}`,
       result,
@@ -14,15 +13,12 @@ routes.post("/posts", multer(multerConfig).single('file'), (req, res)=>{
 
   if(req.file.mimetype== 'application/x-zip-compressed'){
 
-    console.log(req.file.filename.substr(-4))
     const unZips =
       fs
         .createReadStream(local)
         .pipe(unzipper.Extract({ path: 'archives/Temp' }));
       
     result = gerJsonPadrao_Zip('archives/Temp/_chat.txt')
-    console.log(result)
-
    
   }else{
     result = gerJsonPadrao_Txt(local)
@@ -31,7 +27,7 @@ routes.post("/posts", multer(multerConfig).single('file'), (req, res)=>{
   
   return res
             .json(result)
-            .send(req.file)
+            .send()
 });
 
 function gerJsonPadrao_Zip(caminho){
