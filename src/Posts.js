@@ -5,16 +5,16 @@ function Posts(req, res){
     let 
       result,
       arquivo,
-      local = `archives/Upload/${req.file.filename}`;
+      local = `./archives/Upload/${req.file.filename}`;
   
     if(req.file.mimetype== 'application/x-zip-compressed'){
   
       const unZips =
         fs
           .createReadStream(local)
-          .pipe(unzipper.Extract({ path: 'archives/Temp' }));
+          .pipe(unzipper.Extract({ path: './archives/Temp' }));
         
-      result = gerJsonPadrao_Zip('archives/Temp/_chat.txt')
+      result = gerJsonPadrao_Zip('./archives/Temp/_chat.txt')
      
     }else{
       result = gerJsonPadrao_Txt(local)
@@ -99,7 +99,7 @@ function Posts(req, res){
       txt += aux.join(';');
       txt += "\n";
     });
-    const csvFinal = fs.writeFileSync(`archives/Download/${nomeArq}.txt`,txt);
+    const csvFinal = fs.writeFileSync(`./archives/Download/${nomeArq}.txt`,txt);
     return csvFinal;
   
   }
