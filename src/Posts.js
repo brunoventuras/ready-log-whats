@@ -20,12 +20,12 @@ function Posts(req, res){
       result = gerJsonPadrao_Txt(local)
       arquivo = gerArquivo(result)
     }
-    
+    console.log(req.file)
     // return res
     //           .json(result)
     //           .send()
     return res
-              .json(req)
+              .json(req.file)
               .send()
   }
 
