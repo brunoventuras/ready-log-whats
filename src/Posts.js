@@ -21,10 +21,14 @@ function Posts(req, res){
       arquivo = gerArquivo(result)
     }
     
+    // return res
+    //           .json(result)
+    //           .send()
     return res
-              .json(result)
+              .json(req)
               .send()
   }
+
   function gerJsonPadrao_Zip(caminho){
     let result = new Array
     let data, horario, contato, status, altStatus, grupo
